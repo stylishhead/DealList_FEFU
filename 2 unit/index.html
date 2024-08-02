@@ -1,0 +1,88 @@
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Список дел</title>
+  <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+  <div id="deal-list">
+    <div class="header">
+      <h1>{{ header || 'Добро пожаловать!' }}</h1>
+      <button v-if="editing" @click="doEdit(false)" class="btn btn-cancel">Отмена</button>
+      <button v-else @click="doEdit(true)" class="btn btn-primry">Добавить</button>
+    </div>
+    
+    <div v-if="editing" class="add-deal-form">
+      <input 
+        @keyup.enter="saveDeal" 
+        type="text" v-model="newDeal" placeholder = "Введите дело">
+      <label>
+        <input type="checkbox" v-model="newDealHighPriority">
+        Высокий приоритет
+      </label>
+      <button 
+        @click="saveDeal" 
+        class="btn btn-primary">
+        Сохранить дело
+      </button>
+    </div>
+    <p v-if="deals.length === 0">Хорошаяя работа! Дела выполнены!</p>
+    <ul>
+      <li 
+        v-for="deal in reversedDeals" 
+        @click="togglePurchased(deal)"
+        :key="deal.id"
+        class="static-class"
+        :class="{strikeout: deal.purchased, priority: deal.highPriority}"
+      >
+        {{deal.label}}
+      </li>
+    </ul>
+  </div>
+  <script src="https://unpkg.com/vue@3"></script>
+  <script>
+    const dealListApp = Vue.createApp({
+      data() {
+        return {
+          header: 'Приложение "Список дел"',
+          editing:false,
+          newDeal: '',
+          newDealHighPriority: false,
+          deals:[
+            {id: 1, label:'Тренировка', purchased: true, highPriority: false},
+            {id: 2, label:'Забрать посылку', purchased: true, highPriority: false},
+            {id: 3, label:'Свидание в 20:00', purchased: false, highPriority: true},
+          ]
+        }
+      },
+      computed:{
+        reversedDeals(){
+          return [...this.deals].reverse()
+        }
+      },
+      methods:{
+        saveDeal(){
+          this.deals.push({
+            id:this.deals.length + 1, 
+            label: this.newDeal,
+            highPriority: this.newDealHighPriority
+          })
+          this.newDeal = ""
+          this.newDealighPriority = false
+        },
+        doEdit(editing){
+          this.editing = editing
+          this.newDeal = ""
+          this.newDealHighPriority = false
+        },
+        togglePurchased(deal){
+          deal.purchased = !deal.purchased
+        }
+      }
+    }).mount('#deal-list')
+  </script>
+</body>
+
+</html>
