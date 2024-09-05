@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@3.1.6/dist/vuetify.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <div id="app">
+    <v-container>
+      <v-row>
+        <v-col>
+          <h1>Уведомления</h1>
+
+          <notification-message type="error" header="Внимание!">
+            <template v-slot:default>
+              <p>У вас есть неоплаченный <b>штраф</b></p>
+            </template>
+          </notification-message>
+
+          <notification-message type="success" header="Хорошие новости!">
+            <template v-slot:default>
+              <p>У вас нет штрафов!</p>
+            </template>
+          </notification-message>
+
+          <notification-message type="info" header="Добро пожаловать!">
+            <template v-slot:default>
+              <p>Спасибо, что зашли на наш сайт!</p>
+            </template>
+          </notification-message>
+        </v-col>
+      </v-row>
+    </v-container>
+  </div>
+
+  <script type="text/x-template" id="notification-message-template">
+    <v-alert :type="alertType" dismissible v-model="visible">
+      <div class="alert-header">
+        <strong>{{ header }}</strong>
+        <v-btn @click="visible = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </div>
+      <div class="alert-body">
+        <slot></slot>
+      </div>
+    </v-alert>
+  </script>
+
+  <script src="https://unpkg.com/vue@3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vuetify@3.1.6/dist/vuetify.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@mdi/font/css/materialdesignicons.min.css"></script>
+
+  <script>
+    const { createApp } = Vue;
+    const { createVuetify } = Vuetify;
+
+    const vuetify = createVuetify();
+
+    createApp({})
+      .component('notification-message', {
+        template: '#notification-message-template',
+        props: {
+          type: { type: String, default: 'info' },
+          header: { type: String, default: 'Сообщение' }
+        },
+        data() {
+          return {
+            visible: true
+          };
+        },
+        computed: {
+          alertType() {
+            return this.type;
+          }
+        }
+      })
+      .use(vuetify)
+      .mount('#app');
+  </script>
+
+  <style>
+    .alert-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .alert-body {
+      margin-top: 8px;
+    }
+  </style>
+
+</body>
+
+</html>
